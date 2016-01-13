@@ -1,0 +1,24 @@
+Host smile
+	HostName 14.19.19.14
+	Port 7022
+	User mikulas
+
+Host fray1
+	HostName fray1.fit.cvut.cz
+	User ditemiku
+
+Host delta
+	HostName 13.14.15.16
+
+Host router
+	HostName router
+	User root
+
+Host pi
+	HostName pi
+	User pi
+
+Host aws
+	HostName spike.com
+	User admin
+	IdentityFile ~/.ssh/aws-mikulas.pem

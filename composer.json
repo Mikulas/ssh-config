@@ -1,19 +1,29 @@
 {
-    "name": "mikulas/ssh-config-parser",
+    "name": "mikulas/ssh-config",
     "description": "Parse ssh config files",
+    "keywords": ["ssh", "ssh-config"],
     "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
     "require": {
         "nette/tokenizer": "^2.2"
     },
     "require-dev": {
         "nette/tester": "^1.6"
     },
-    "license": "MIT",
     "authors": [
         {
             "name": "Mikulas Dite",
             "email": "mikulas.dite@gmail.com"
         }
     ],
-    "minimum-stability": "stable"
+    "autoload": {
+        "psr-4": { "Mikulas\\SshConfig\\": "src/" }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/cases",
+            "tests/inc"
+        ]
+    }
 }
