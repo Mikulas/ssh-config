@@ -1,0 +1,19 @@
+{
+    "name": "mikulas/ssh-config-parser",
+    "description": "Parse ssh config files",
+    "type": "library",
+    "require": {
+        "nette/tokenizer": "^2.2"
+    },
+    "require-dev": {
+        "nette/tester": "^1.6"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mikulas Dite",
+            "email": "mikulas.dite@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
