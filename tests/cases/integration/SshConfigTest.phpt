@@ -12,11 +12,29 @@ $dic = require_once __DIR__ . '/../../bootstrap.php';
 class SshConfigTest extends TestCase
 {
 
-	public function testSimple()
+	public function getParsed($fixture)
 	{
 		$sshConfig = new SshConfig();
-		$parsed = $sshConfig->parse($this->getFixture('config-simple.txt'));
-		var_dump($parsed);
+		return $sshConfig->parse($this->getFixture("config-{$fixture}.txt"));
+	}
+
+
+	public function testSimple()
+	{
+		$parsed = $this->getParsed('simple');
+	}
+
+
+	public function testFirstValueUsed()
+	{
+		$parsed = $this->getParsed('first');
+		Assert::equal([
+			'smile' => [
+				'host' => 'smile',
+				'user' => 'alpha',
+				'port' => '7022',
+			],
+		], $parsed);
 	}
 
 }

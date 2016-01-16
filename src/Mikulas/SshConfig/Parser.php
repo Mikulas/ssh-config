@@ -21,12 +21,15 @@ class Parser
 	 */
 	public function parse(TokenIterator $tokens)
 	{
-		Debugger::dumpTokens($tokens);
-
 		$state = self::HOST;
 		$hosts = [];
 		$keyword = NULL;
 		$currentHost = [];
+
+		$close = function($currentHost) use (&$hosts) {
+			$key = $currentHost['host'];
+			$hosts[$key] = array_replace($currentHost, isset($hosts[$key]) ? $hosts[$key] : []);
+		};
 
 		while ($token = $tokens->nextToken()) {
 			list($value, $_, $type) = $token;
@@ -38,10 +41,12 @@ class Parser
 				case Lexer::T_COMMENT:
 					break;
 				case Lexer::T_KEYWORD:
-					$keyword = $value;
-					if (strToLower($keyword) === 'host') {
+					$keyword = strToLower($value);
+					if ($keyword === 'host') {
 						$this->assertState([self::HOST, self::KEYWORD], $state);
-						$hosts[] = $currentHost;
+						if ($currentHost !== []) {
+							call_user_func($close, $currentHost);
+						}
 						$currentHost = [];
 					} else {
 						$this->assertState([self::KEYWORD], $state);
@@ -53,12 +58,15 @@ class Parser
 					// intentional fall-through
 				case Lexer::T_ARG:
 					$this->assertState([self::ARGUMENTS], $state);
-					$currentHost[$keyword] = $value;
+					if (!array_key_exists($keyword, $currentHost)) {
+						$currentHost[$keyword] = $value;
+					}
 					$state = self::KEYWORD;
 					break;
 			}
 		}
-		$hosts[] = $currentHost;
+
+		call_user_func($close, $currentHost);
 
 		return $hosts;
 	}

@@ -1,0 +1,7 @@
+Host smile
+	User alpha
+	Port 7022
+	User beta
+
+Host smile
+	User gama
