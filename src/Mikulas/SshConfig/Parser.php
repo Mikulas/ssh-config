@@ -38,8 +38,8 @@ class Parser
 				case Lexer::T_COMMENT:
 					break;
 				case Lexer::T_KEYWORD:
-					$keyword = strToLower($value);
-					if ($keyword === 'host') {
+					$keyword = $value;
+					if (strToLower($keyword) === 'host') {
 						$this->assertState([self::HOST, self::KEYWORD], $state);
 						$hosts[] = $currentHost;
 						$currentHost = [];
