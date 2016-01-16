@@ -22,6 +22,8 @@ class SshConfigTest extends TestCase
 	public function testSimple()
 	{
 		$parsed = $this->getParsed('simple');
+		Assert::same('smile', $parsed['smile']['host']);
+		Assert::same('14.19.19.14', $parsed['smile']['hostname']);
 	}
 
 

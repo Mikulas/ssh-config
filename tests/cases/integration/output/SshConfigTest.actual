@@ -1,0 +1,22 @@
+array(
+	'smile' => array(
+		'host' => 'smile',
+		'hostname' => '14.19.19.14',
+		'port' => '7022',
+		'user' => 'mikulas',
+	),
+	'fray1' => array(
+		'host' => 'fray1',
+		'hostname' => 'fray1.fit.cvut.cz',
+		'user' => 'ditemiku',
+	),
+	'delta' => array('host' => 'delta', 'hostname' => '13.14.15.16'),
+	'router' => array('host' => 'router', 'hostname' => 'router', 'user' => 'root'),
+	'pi' => array('host' => 'pi', 'hostname' => 'pi', 'user' => 'pi'),
+	'aws' => array(
+		'host' => 'aws',
+		'hostname' => 'spike.com',
+		'user' => 'admin',
+		'identityfile' => '~/.ssh/aws-mikulas.pem',
+	),
+)
