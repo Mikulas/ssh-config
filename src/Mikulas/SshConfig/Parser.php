@@ -3,48 +3,72 @@
 
 namespace Mikulas\SshConfig;
 
+use Nette\Utils\TokenIterator;
+
 
 class Parser
 {
 
-	const NO_SECTION = 1;
-	const HOST = 2;
-	const HOST_PATTERN = 3;
-	const KEYWORD = 4;
-	const ARGUMENTS = 5;
+	// states (denotes which tokens are expected next)
+	const HOST = 'HOST';
+	const KEYWORD = 'KEYWORD';
+	const ARGUMENTS = 'ARGUMENTS';
 
 
 	/**
-	 * @param TokenCollection $tokens
+	 * @param TokenIterator $tokens
 	 * @return mixed TODO
 	 */
-	public function parse(TokenCollection $tokens)
+	public function parse(TokenIterator $tokens)
 	{
 		Debugger::dumpTokens($tokens);
 
-		$state = self::NO_SECTION;
-		$ts = $this->getTransitions();
+		$state = self::HOST;
+		$hosts = [];
+		$keyword = NULL;
+		$currentHost = [];
 
-		foreach ($tokens as list($value, $_, $type)) {
+		while ($token = $tokens->nextToken()) {
+			list($value, $_, $type) = $token;
+			$value = trim($value);
+
 			switch ($type) {
-				case Lexer::T_WHITESPACE:
+				case Lexer::T_NEWLINE:
 				case Lexer::T_SEPARATOR:
-					continue;
-				case Lexer::T_ARGUMENT:
-					if ($state === self::ARGUMENTS) {
-						$this->assertState()
+				case Lexer::T_COMMENT:
+					break;
+				case Lexer::T_KEYWORD:
+					$keyword = strToLower($value);
+					if ($keyword === 'host') {
+						$this->assertState([self::HOST, self::KEYWORD], $state);
+						$hosts[] = $currentHost;
+						$currentHost = [];
+					} else {
+						$this->assertState([self::KEYWORD], $state);
 					}
-					$this->assertState(self::HOST, $type);
+					$state = self::ARGUMENTS;
+					break;
+				case Lexer::T_ARG_QUOT:
+					$value = substr($value, 1, -1);
+					// intentional fall-through
+				case Lexer::T_ARG:
+					$this->assertState([self::ARGUMENTS], $state);
+					$currentHost[$keyword] = $value;
+					$state = self::KEYWORD;
+					break;
 			}
 		}
+		$hosts[] = $currentHost;
+
+		return $hosts;
 	}
 
 
 //	/**
-//	 * @param TokenCollection $tokens
-//	 * @return TokenCollection filtered
+//	 * @param TokenIterator $tokens
+//	 * @return TokenIterator filtered
 //	 */
-//	private function removeWhitespace(TokenCollection $tokens)
+//	private function removeWhitespace(TokenIterator $tokens)
 //	{
 //		$filtered = [];
 //
@@ -59,19 +83,23 @@ class Parser
 //			$filtered[] = $token;
 //		}
 //
-//		return new TokenCollection($filtered);
+//		return new TokenIterator($filtered);
 //	}
 
 
 	/**
-	 * @param string $expected
+	 * @param string|array $expected
 	 * @param string $type
 	 * @throws ConfigException
 	 */
 	private function assertState($expected, $type)
 	{
-		if ($expected !== $type) {
-			throw ConfigException::createFromParser("Expected state $expected but is $type");
+		if (!is_array($expected)) {
+			$expected = [$expected];
+		}
+		if (!in_array($type, $expected, TRUE)) {
+			$expectedFmt = implode(', ', $expected);
+			throw ConfigException::createFromParser("Expected state $expectedFmt but is $type");
 		}
 	}
 

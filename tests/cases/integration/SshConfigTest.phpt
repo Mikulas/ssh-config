@@ -15,7 +15,8 @@ class SshConfigTest extends TestCase
 	public function testSimple()
 	{
 		$sshConfig = new SshConfig();
-		$sshConfig->parse($this->getFixture('config-simple.txt'));
+		$parsed = $sshConfig->parse($this->getFixture('config-simple.txt'));
+		var_dump($parsed);
 	}
 
 }
